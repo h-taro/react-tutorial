@@ -1,15 +1,15 @@
 import React from "react";
 import { Square } from "./Square";
 
-type SquareType = 'O' | 'X' | null;
+export type SquareType = 'O' | 'X' | null;
 
-type BoardState = {
+type BoardProps = {
     squares: Array<SquareType>
-    xIsNext: boolean
+    onClick: (i: number) => void
 }
 
-export class Board extends React.Component<{}, BoardState> {
-    constructor(props: {}) {
+export class Board extends React.Component<BoardProps> {
+    constructor(props: BoardProps) {
         super(props);
         this.state = {
             squares: Array(9).fill(null),
@@ -37,39 +37,16 @@ export class Board extends React.Component<{}, BoardState> {
         return null;
     }
 
-    handleClick(i: number) {
-        const squares = this.state.squares.slice();
-
-        if (this.calculateWinner(squares) || squares[i]) {
-            return;
-        }
-
-        squares[i] = this.state.xIsNext ? "X" : "O";
-        this.setState({
-            squares: squares,
-            xIsNext: !this.state.xIsNext
-        });
-    }
-
     renderSquare(i: number) {
         return <Square
-            value={this.state.squares[i]}
-            onClick={() => this.handleClick(i)}
+            value={this.props.squares[i]}
+            onClick={() => this.props.onClick(i)}
         />;
     }
 
     render(): React.ReactNode {
-        const winner = this.calculateWinner(this.state.squares);
-        let status;
-        if (winner) {
-            status = "Winner: " + winner;
-        } else {
-            status = "Next player: " + (this.state.xIsNext ? "X" : "O");
-        }
-
         return (
             <div>
-                <div className="status">{status}</div>
                 <div className="board-row">
                     {this.renderSquare(0)}
                     {this.renderSquare(1)}
